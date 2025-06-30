@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat IA Moderno</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Overlay para el modal -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+
+        <!-- Panel de la lista de chats (ahora un modal) -->
+        <div class="chat-list-panel" id="chat-list-panel">
+            <div class="panel-header">
+                <h3>Mis Chats</h3>
+                <button id="close-panel-btn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <ul class="chat-list" id="chat-list">
+                <!-- Los chats se agregarán aquí dinámicamente -->
+            </ul>
+        </div>
+
+        <!-- Modal para Editar Chat -->
+        <div class="modal-overlay" id="edit-modal-overlay"></div>
+        <div class="edit-chat-modal" id="edit-chat-modal">
+            <h3>Editar Chat</h3>
+            <div class="form-group">
+                <label for="edit-chat-name-input">Nombre del Chat</label>
+                <input type="text" id="edit-chat-name-input" placeholder="Nuevo nombre...">
+            </div>
+            <div class="form-group">
+                <label for="edit-chat-color-input">Color del Título</label>
+                <input type="color" id="edit-chat-color-input" value="#ffffff">
+            </div>
+            <div class="modal-buttons">
+                <button id="cancel-edit-btn">Cancelar</button>
+                <button id="save-edit-btn">Guardar</button>
+            </div>
+        </div>
+
+        <!-- Contenedor principal del chat -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2 id="chat-title">Asistente IA</h2>
+            </div>
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-content">
+                    <h1>Chat IA Moderno</h1>
+                    <div class="recommendations-grid">
+                        <div class="recommendation-card">
+                            <h4>Descripción</h4>
+                            <p>Escribe un poema sobre la lluvia.</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <h4>Recomendaciones</h4>
+                            <p>Crea un plan de viaje a Japón.</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <h4>Más Relevantes</h4>
+                            <p>Explícame la computación cuántica.</p>
+                        </div>
+                        <div class="recommendation-card">
+                            <h4>Actualmente</h4>
+                            <p>Resume las noticias de hoy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-box" id="chat-box">
+                <!-- Mensajes del chat aquí -->
+            </div>
+
+            <div class="chat-input" id="chat-input-area">
+                <button id="attach-image-btn" class="input-action-btn"><i class="fas fa-image"></i></button>
+                <input type="text" id="user-input" placeholder="Escribe un mensaje...">
+                <button id="send-btn" class="input-action-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- Modal para Subir Imágenes -->
+        <div class="modal-overlay" id="image-upload-overlay"></div>
+        <div class="image-upload-modal" id="image-upload-modal">
+            <h3 style="margin-bottom: 20px;">Subir Imágenes</h3>
+            <div class="upload-area" id="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Arrastra y suelta o <b>haz clic aquí</b> para seleccionar imágenes</p>
+            </div>
+            <div class="image-preview-container" id="image-preview-container">
+                <!-- Previews de imágenes aquí -->
+            </div>
+            <div class="modal-buttons">
+                <button id="add-more-images-btn" class="secondary-btn"><i class="fas fa-plus"></i> Agregar más</button>
+                <div class="main-buttons">
+                    <button id="cancel-upload-btn">Cancelar</button>
+                    <button id="send-images-btn">Enviar</button>
+                </div>
+            </div>
+            <input type="file" id="image-file-input" multiple accept="image/*" style="display: none;">
+        </div>
+
+        <!-- Modal de Ajustes -->
+        <div class="modal-overlay" id="settings-overlay"></div>
+        <div class="settings-modal" id="settings-modal">
+            <h3>Ajustes de Apariencia</h3>
+
+            <div class="setting-item">
+                <label for="font-size-slider">Tamaño de letra</label>
+                <div class="font-size-control">
+                    <span>Pequeño</span>
+                    <input type="range" id="font-size-slider" min="12" max="20" value="16">
+                    <span>Grande</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Forma de globo de texto</label>
+                <div class="bubble-shape-selector" id="bubble-shape-selector">
+                    <div class="shape-option active" data-shape="default"></div>
+                    <div class="shape-option" data-shape="sharp"></div>
+                    <div class="shape-option" data-shape="rounded-alt"></div>
+                    <div class="shape-option" data-shape="tailed"></div>
+                    <div class="shape-option" data-shape="minimal"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label for="chat-bg-color">Color de chat (fondo)</label>
+                <input type="color" id="chat-bg-color" value="#1e1e2e">
+            </div>
+
+            <div class="setting-item">
+                <label for="fast-response-toggle">Responder acelerado</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="fast-response-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <label for="gemini-api-key">Clave API de Gemini</label>
+                <div class="api-key-wrapper">
+                    <input type="password" id="gemini-api-key" placeholder="Pega tu clave aquí">
+                    <i class="fas fa-eye" id="toggle-api-key"></i>
+                </div>
+            </div>
+
+            <div class="modal-buttons settings-buttons">
+                <button id="reset-settings-btn" class="secondary-btn">Reset</button>
+                <div class="main-buttons">
+                    <button id="cancel-settings-btn">Cancelar</button>
+                    <button id="save-settings-btn">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú flotante de iconos -->
+        <div class="fab-container">
+            <div class="fab-menu">
+                <button class="fab-main" id="fab-main">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="fab-options">
+                    <button class="fab-option" id="fab-new-chat" title="Nuevo Chat">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="fab-option" id="fab-view-chats" title="Ver Chats">
+                        <i class="fas fa-comments"></i>
+                    </button>
+                    <button class="fab-option" id="fab-settings" title="Ajustes">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="fab-option" id="fab-premium" title="Actualice a Premium">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="fab-option" id="fab-info" title="Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
