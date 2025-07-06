@@ -24,12 +24,16 @@
 body {
     background-color: var(--primary-bg);
     color: var(--text-primary);
-    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    /* overflow: hidden; se elimina para evitar problemas en móviles */
 }
 
 .app-container {
     display: flex;
     height: 100vh;
+    overflow: hidden;
     position: relative;
 }
 
@@ -210,10 +214,32 @@ body {
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
     .app-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr auto;
-        height: 100vh; /* Full viewport height */
+        height: 90vh; /* Full viewport height */
         height: -webkit-fill-available; /* iOS Safari fix */
+    }
+
+    .chat-container {
+        display: grid;
+        grid-template-rows: auto 1fr auto; /* Header, ChatBox, Input */
+        height: 100%;
+    }
+
+    .chat-box {
+        padding: 15px;
+        min-height: 80vh;/* Esencial para que el scroll funcione en grid/flex */
+    }
+
+    .message-wrapper {
+        max-width: 100%;
+    }
+
+    .message p {
+        max-width: 100%; /* El wrapper ya controla el ancho */
+    }
+
+    .message-actions {
+        opacity: 1; /* Siempre visible en móvil para facilidad de uso */
+        visibility: visible;
     }
 
     .chat-list-panel {
@@ -229,14 +255,6 @@ body {
 
     .chat-header h2 {
         font-size: 1.1em;
-    }
-
-    .chat-box {
-        padding: 15px;
-    }
-
-    .message p {
-        max-width: 90%;
     }
 
     .chat-input-area {
@@ -332,20 +350,67 @@ body {
     font-style: italic;
 }
 
+.message-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.message-wrapper.sent {
+    justify-content: flex-end;
+    flex-direction: row-reverse; /* Pone el botón a la izquierda */
+}
+
+.message-wrapper.received {
+    justify-content: flex-start;
+}
+
+.message-actions {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.message-wrapper:hover .message-actions {
+    opacity: 1;
+    visibility: visible;
+}
+
+.reply-btn {
+    background: var(--secondary-bg);
+    border: none;
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.reply-btn:hover {
+    background: var(--accent-hover);
+    color: var(--text-primary);
+}
+
 .message {
     display: flex;
-    flex-direction: column; /* Apila texto e imágenes verticalmente si ambos existen */
+    flex-direction: column; 
     max-width: 100%;
-    animation: message-in 0.3s ease-out; /* Animación de envío */
+    animation: message-in 0.3s ease-out;
 }
 
 .message p {
     padding: 12px 18px;
     border-radius: 18px;
     line-height: 1.5;
-    font-size: var(--chat-font-size, 1rem); /* Corregido: Usa variable de CSS */
-    word-wrap: break-word; /* Asegura el ajuste de palabras */
-    max-width: 75%; /* Ancho máximo de la burbuja */
+    font-size: var(--chat-font-size, 1rem);
+    word-wrap: break-word;
+    max-width: 100%; /* El wrapper controla el ancho ahora */
 }
 
 .message-images {
@@ -353,15 +418,7 @@ body {
     flex-wrap: wrap;
     gap: 5px;
     margin-top: 5px;
-    max-width: 75%;
-}
-
-.received {
-    align-items: flex-start; /* Alinea burbuja a la izquierda */
-}
-
-.sent {
-    align-items: flex-end; /* Alinea burbuja a la derecha */
+    max-width: 100%; /* El wrapper controla el ancho */
 }
 
 .received p {

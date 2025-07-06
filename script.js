@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
         geminiApiKey: ''
     };
 
+    // --- Version ---
+    const version = '1.2.0';
+
     // --- Lógica de Ajustes ---
     const applySettings = (settingsToApply) => {
         document.documentElement.style.setProperty('--chat-font-size', `${settingsToApply.fontSize}px`);
@@ -138,9 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const appendMessage = (message, id = null) => {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('message-wrapper', message.type);
+
         const messageElement = document.createElement('div');
         if (id) messageElement.id = id;
-        messageElement.classList.add('message', message.type);
+        messageElement.classList.add('message');
 
         const hasText = message.text && message.text.trim() !== '';
         const hasImages = message.images && message.images.length > 0;
@@ -158,21 +164,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hasText) {
             const p = document.createElement('p');
-            p.dataset.shape = settings.bubbleShape; // Apply shape regardless
-
+            p.dataset.shape = settings.bubbleShape;
             if (messageElement.id === 'typing-indicator') {
                 p.textContent = message.text;
             } else {
-                // Use marked.js to convert Markdown to HTML, enabling rich text.
-                // gfm: true enables GitHub Flavored Markdown (tables, etc.)
-                // breaks: true converts single line breaks into <br> tags for better readability.
                 p.innerHTML = marked.parse(message.text, { gfm: true, breaks: true });
             }
             messageElement.appendChild(p);
         }
 
+        // Botón de respuesta
+        const actions = document.createElement('div');
+        actions.className = 'message-actions';
+        const replyBtn = document.createElement('button');
+        replyBtn.className = 'reply-btn';
+        replyBtn.title = 'Responder';
+        replyBtn.innerHTML = '<i class="fas fa-reply"></i>';
+        replyBtn.onclick = () => {
+            const replyText = `> ${message.text.split('\n')[0]}...\n\n`;
+            userInput.value = replyText + userInput.value;
+            userInput.focus();
+        };
+        actions.appendChild(replyBtn);
+
+        wrapper.appendChild(messageElement);
+        wrapper.appendChild(actions);
+
         if (hasText || hasImages) {
-            chatBox.appendChild(messageElement);
+            chatBox.appendChild(wrapper);
         }
         chatBox.scrollTop = chatBox.scrollHeight;
         return messageElement;
@@ -438,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chatBgColorInput.addEventListener('input', (e) => applySettings({ ...settings, chatBgColor: e.target.value }));
     // Otros
     fabPremium.addEventListener('click', () => alert('Función Premium próximamente.'));
-    fabInfo.addEventListener('click', () => alert('Chat IA Moderno v1.0'));
+    fabInfo.addEventListener('click', () => alert(`Chat IA Modern v${version}, next update in 1 week.`));
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
